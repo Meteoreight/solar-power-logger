@@ -1,0 +1,5 @@
+{
+  "name": "Solar Power Logger",
+  "description": "A web application to record and visualize solar power generation for portable power stations. Users can input daily recovery percentages, view generation statistics through charts, manage data in a table, and import/export data via CSV.",
+  "requestFramePermissions": []
+}

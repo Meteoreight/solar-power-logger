@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  solar-power-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    container_name: solar-power-logger
+    
+  # Optional: Add a development service for hot reloading
+  solar-power-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    restart: unless-stopped
+    container_name: solar-power-logger-dev
+    profiles:
+      - dev
