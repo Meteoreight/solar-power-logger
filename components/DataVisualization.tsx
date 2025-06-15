@@ -123,7 +123,7 @@ const DataVisualization: React.FC<DataVisualizationProps> = ({ records }) => {
                 labelStyle={{ fontWeight: 'bold', color: '#333' }}
               />
               <Legend />
-              <Line type="monotone" dataKey="cumulativeWh" stroke="#10b981" strokeWidth={2} name="Cumulative Wh" dot={{ r: 3 }} activeDot={{ r: 6 }} />
+              <Line type="monotone" dataKey="cumulativeWh" stroke="#10b981" strokeWidth={2} name="Cumulative Wh" dot={false} activeDot={{ r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
         ) : (

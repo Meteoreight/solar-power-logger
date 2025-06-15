@@ -1,5 +1,8 @@
 version: '3.8'
 
+volumes:
+  solardata:
+
 services:
   solar-power-app:
     build:
@@ -9,6 +12,8 @@ services:
       - "3000:80"
     environment:
       - NODE_ENV=production
+    volumes:
+      - solardata:/app/data
     restart: unless-stopped
     container_name: solar-power-logger
     
