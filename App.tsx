@@ -15,15 +15,32 @@ const App: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const loadedRecords = loadRecordsFromStorage();
-    setRecords(loadedRecords);
-    setIsDataLoaded(true);
+    const fetchRecords = async () => {
+      try {
+        const loadedRecords = await loadRecordsFromStorage();
+        setRecords(loadedRecords);
+      } catch (error) {
+        console.error("Failed to load records:", error);
+        // Optionally set an error state here to inform the user
+      } finally {
+        setIsDataLoaded(true);
+      }
+    };
+    fetchRecords();
   }, []);
 
   useEffect(() => {
-    if (isDataLoaded) {
-      saveRecordsToStorage(records);
-    }
+    const saveRecords = async () => {
+      if (isDataLoaded) {
+        try {
+          await saveRecordsToStorage(records);
+        } catch (error) {
+          console.error("Failed to save records:", error);
+          // Optionally set an error state here to inform the user
+        }
+      }
+    };
+    saveRecords();
   }, [records, isDataLoaded]);
 
   const addOrUpdateRecord = useCallback((date: string, stationInputs: Record<PowerStationId, string>) => {
