@@ -2,6 +2,24 @@
 import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { DailyPowerRecord, TimeRangeFilter } from '../types';
+import CumulativeStatsDisplay from './CumulativeStatsDisplay';
+
+// Helper function to calculate cumulative generation for a given period
+const calculateCumulativeGenerationForPeriod = (records: DailyPowerRecord[], days: number): number => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalize today to the start of the day
+
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() - (days - 1)); // Subtract days to get the start date, inclusive of today
+
+  const filteredRecords = records.filter(record => {
+    const recordDate = new Date(record.date);
+    return recordDate >= startDate && recordDate <= today;
+  });
+
+  const totalGeneration = filteredRecords.reduce((sum, record) => sum + record.totalWhGenerated, 0);
+  return totalGeneration;
+};
 
 interface DataVisualizationProps {
   records: DailyPowerRecord[];
@@ -9,6 +27,15 @@ interface DataVisualizationProps {
 
 const DataVisualization: React.FC<DataVisualizationProps> = ({ records }) => {
   const [timeRange, setTimeRange] = useState<TimeRangeFilter>('30d');
+
+  // Calculate cumulative generation for the last 7 and 30 days
+  const cumulative7Days = useMemo(() => {
+    return calculateCumulativeGenerationForPeriod(records, 7);
+  }, [records]);
+
+  const cumulative30Days = useMemo(() => {
+    return calculateCumulativeGenerationForPeriod(records, 30);
+  }, [records]);
 
   const filteredAndSortedRecords = useMemo(() => {
     const now = new Date();
@@ -76,6 +103,9 @@ const DataVisualization: React.FC<DataVisualizationProps> = ({ records }) => {
 
   return (
     <div className="space-y-8">
+      <div className="mb-6"> {/* Added a container for CumulativeStatsDisplay and buttons for better layout control */}
+        <CumulativeStatsDisplay cumulative7DaysWh={cumulative7Days} cumulative30DaysWh={cumulative30Days} />
+      </div>
       <div className="flex justify-center space-x-2 sm:space-x-4 mb-6">
         {timeRangeOptions.map(option => (
           <button
