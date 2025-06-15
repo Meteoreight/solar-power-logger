@@ -2,12 +2,12 @@ volumes:
   solardata:
 
 services:
-  frontend: # Renamed from solar-power-app
+  frontend:
     build:
       context: .
       dockerfile: Dockerfile # This is the existing Dockerfile for Nginx frontend
     ports:
-      - "3002:80" # Nginx still serves on port 80 internally
+      - "3002:80"
     container_name: solar-power-frontend
     restart: unless-stopped
     depends_on:
