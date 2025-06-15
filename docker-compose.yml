@@ -41,7 +41,6 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
     restart: unless-stopped
     container_name: solar-power-logger-dev
     profiles:
