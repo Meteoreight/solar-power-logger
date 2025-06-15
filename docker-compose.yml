@@ -4,20 +4,34 @@ volumes:
   solardata:
 
 services:
-  solar-power-app:
+  frontend: # Renamed from solar-power-app
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile # This is the existing Dockerfile for Nginx frontend
     ports:
-      - "3000:80"
-    environment:
-      - NODE_ENV=production
-    volumes:
-      - solardata:/app/data
+      - "3000:80" # Nginx still serves on port 80 internally
+    container_name: solar-power-frontend
     restart: unless-stopped
-    container_name: solar-power-logger
-    
-  # Optional: Add a development service for hot reloading
+    depends_on:
+      - backend
+    # environment: # NODE_ENV=production is often set in the Dockerfile itself for frontend builds
+      # - NODE_ENV=production
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: solar-power-backend
+    restart: unless-stopped
+    volumes:
+      - solardata:/app/data # Mount the named volume
+    # environment: # Add if server.js needs env vars like GEMINI_API_KEY
+    #   - NODE_ENV=production
+    # Expose 3001 if direct access needed, otherwise Nginx handles it
+    # ports:
+    #   - "3001:3001"
+
+  # solar-power-dev service remains for frontend dev, but won't include backend logic
   solar-power-dev:
     build:
       context: .

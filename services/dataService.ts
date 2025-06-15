@@ -96,28 +96,38 @@ export const formatDateToYYYYMMDD = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
-// Local Storage Functions
-export const loadRecordsFromStorage = (): DailyPowerRecord[] => {
+// API Interaction Functions
+export const loadRecordsFromStorage = async (): Promise<DailyPowerRecord[]> => {
   try {
-    const serializedRecords = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (serializedRecords === null) {
+    const response = await fetch('/api/records');
+    if (!response.ok) {
+      console.error(`Error fetching records: ${response.status} ${response.statusText}`);
       return [];
     }
-    const records: DailyPowerRecord[] = JSON.parse(serializedRecords);
-    // Optional: Add validation/migration logic for stored data structure
+    const records: DailyPowerRecord[] = await response.json();
+    // Sort by date descending, as was the previous behavior
     return records.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   } catch (error) {
-    console.error("Error loading records from local storage:", error);
+    console.error("Error loading records from API:", error);
     return [];
   }
 };
 
-export const saveRecordsToStorage = (records: DailyPowerRecord[]): void => {
+export const saveRecordsToStorage = async (records: DailyPowerRecord[]): Promise<void> => {
   try {
-    const serializedRecords = JSON.stringify(records);
-    localStorage.setItem(LOCAL_STORAGE_KEY, serializedRecords);
+    const response = await fetch('/api/records', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(records),
+    });
+    if (!response.ok) {
+      console.error(`Error saving records: ${response.status} ${response.statusText}`);
+      // Consider how to handle this error more gracefully in the UI
+    }
   } catch (error) {
-    console.error("Error saving records to local storage:", error);
+    console.error("Error saving records to API:", error);
   }
 };
 
