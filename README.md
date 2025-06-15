@@ -46,11 +46,7 @@ Before you begin, ensure you have the following installed:
     ```
 
 3.  **Set up environment variables**:
-    Create a `.env.local` file in the root directory and set your `GEMINI_API_KEY` if required by any AI Studio features. Refer to `.env.example` for structure.
-    ```
-    # .env.local
-    GEMINI_API_KEY=your_gemini_api_key_here
-    ```
+    Refer to `.env.example` for structure.
 
 4.  **Run the development server**:
     ```bash
